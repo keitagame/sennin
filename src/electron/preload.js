@@ -23,6 +23,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   setNg: (list) => ipcRenderer.invoke('sen2ch:setNg', list),
   setSettings: (patch) => ipcRenderer.invoke('sen2ch:setSettings', patch),
-  updateDiscordActivity: (details, state) => ipcRenderer.send('sen2ch:updateDiscordActivity', { details, state })
+  updateDiscordActivity: (details, state) => ipcRenderer.send('sen2ch:updateDiscordActivity', { details, state }),
   isElectron: true,
 });
