@@ -2,6 +2,7 @@
 
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
+const DiscordRPC = require('discord-rpc'); // ★追加
 
 const boardClient = require('../core/boardClient');
 const { createStore } = require('../core/store');
@@ -9,6 +10,41 @@ const { normalizeBoardUrl, boardIdFromUrl } = require('../core/parser');
 
 let store;
 let mainWindow;
+
+// --- Discord RPC の設定ここから ---
+// ※ 5ちゃんねるブラウザ向けに仮のIDを入れています（あなたのアプリ名に合わせて変更可能）
+const clientId = '1530091585545703474'; 
+DiscordRPC.register(clientId);
+const rpc = new DiscordRPC.Client({ transport: 'ipc' });
+let rpcReady = false;
+let appStartTime = new Date(); // アプリ起動時からの経過時間を出す用
+
+rpc.on('ready', () => {
+  rpcReady = true;
+  console.log('Discord RPC connected!');
+  // 起動時の初期ステータス
+  updateActivity('板一覧を閲覧中', '');
+});
+
+// 安全にステータスを更新する関数
+function updateActivity(details, state) {
+  if (!rpcReady) return;
+  
+  rpc.setActivity({
+    details: details,              // 1行目（例: 「ニュー速VIP」を閲覧中）
+    state: state || undefined,     // 2行目（例: スレッド: 雑談スレ）※空文字なら非表示
+    startTimestamp: appStartTime,  // 経過時間を表示
+    largeImageKey: 'app_icon',     // Discord Developer Portalで登録した画像キー名
+    largeImageText: 'sen2ch',      // 画像ホバー時のテキスト
+    instance: false,
+  }).catch(err => console.error('Discord RPC Update Error:', err));
+}
+
+// アプリ起動時にDiscordに接続
+rpc.login({ clientId }).catch(err => {
+  console.error('Discord RPC Login Failed (Discordが起動していない可能性があります):', err);
+});
+// --- Discord RPC の設定ここまで ---
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -28,7 +64,6 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '..', '..', 'public', 'index.html'));
 
-  // 外部リンク(スレ内の画像URLなど)はOSの既定ブラウザで開く
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
@@ -50,6 +85,11 @@ app.on('window-all-closed', () => {
 });
 
 function registerIpc() {
+  // ★追加: フロントエンド（画面）からDiscordステータスを書き換えるためのハンドラー
+  ipcMain.on('sen2ch:updateDiscordActivity', (_e, { details, state }) => {
+    updateActivity(details, state);
+  });
+
   ipcMain.handle('sen2ch:getState', () => store.get());
 
   ipcMain.handle('sen2ch:fetchBbsMenu', async (_e, url) => {
