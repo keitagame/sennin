@@ -1,0 +1,39 @@
+{
+  "name": "sen2ch",
+  "version": "1.0.0",
+  "description": "2ch/5ch互換掲示板(Open2ch等)を閲覧するための専ブラ。Electronデスクトップアプリ / Discordアクティビティの両対応。",
+  "main": "src/electron/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "server": "node src/server/index.js",
+    "server:dev": "node --watch src/server/index.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "iconv-lite": "^0.6.3",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "jp.local.sen2ch",
+    "productName": "Sen2ch",
+    "files": [
+      "src/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  }
+}
