@@ -1,0 +1,191 @@
+/* ==========================================================================
+   Sen2ch design tokens
+   モチーフ: 墨(すみ)と朱(しゅ) — 古い和紙の掲示板に、駅の発車標のような
+   ドットの規則性を重ねる。文字はAAを崩さないよう常に等幅系を用いる。
+   ========================================================================== */
+:root {
+  --ink-900: #121110;
+  --ink-800: #1a1812;
+  --ink-700: #221f17;
+  --ink-600: #2c2819;
+  --paper: #ece4d3;
+  --paper-dim: #b7ac93;
+  --paper-faint: #8a8069;
+  --shu: #c1440e;       /* 朱色: アクセント・新着・強調 */
+  --shu-soft: #c1440e33;
+  --gold: #b8934a;      /* 真鍮色: 勢い・情報 */
+  --gold-soft: #b8934a26;
+  --line: #3a3524;
+  --danger: #d64545;
+  --font-ui: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "BIZ UDGothic", system-ui, sans-serif;
+  --font-mono: ui-monospace, "BIZ UDGothic", "MS PGothic", "Osaka－等幅", "Courier New", monospace;
+}
+
+[data-theme="light"] {
+  --ink-900: #f3ede0;
+  --ink-800: #ece3d2;
+  --ink-700: #e2d7bf;
+  --ink-600: #d8caa9;
+  --paper: #221f17;
+  --paper-dim: #4d4736;
+  --paper-faint: #6c6448;
+  --line: #cabc98;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--ink-900);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  overflow: hidden;
+}
+
+.app { height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- topbar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px;
+  height: 52px;
+  background: linear-gradient(180deg, var(--ink-800), var(--ink-700));
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.brand { display: flex; align-items: baseline; gap: 6px; letter-spacing: 0.04em; }
+.brand-mark { color: var(--shu); font-size: 18px; }
+.brand-text { font-weight: 700; font-size: 15px; }
+.brand-sub { margin-left: 6px; font-size: 10px; color: var(--paper-faint); font-family: var(--font-mono); }
+
+.tabs { display: flex; gap: 2px; margin-left: 8px; }
+.tab {
+  background: transparent; border: 1px solid transparent; color: var(--paper-dim);
+  padding: 7px 12px; border-radius: 3px; cursor: pointer; font-size: 13px; font-family: var(--font-ui);
+}
+.tab:hover { color: var(--paper); }
+.tab.active { color: var(--shu); border-color: var(--shu-soft); background: var(--shu-soft); }
+
+.topbar-right { margin-left: auto; display: flex; gap: 4px; }
+.iconbtn {
+  background: transparent; border: 1px solid var(--line); color: var(--paper-dim);
+  width: 32px; height: 32px; border-radius: 3px; cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+}
+.iconbtn:hover { color: var(--shu); border-color: var(--shu); }
+.only-narrow { display: none; }
+
+/* ---------- layout ---------- */
+.layout { flex: 1; display: grid; grid-template-columns: 240px 340px 1fr; min-height: 0; }
+.pane { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--line); }
+.post-pane { border-right: none; }
+.pane-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.pane-title { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pane-body { flex: 1; overflow-y: auto; }
+.pane-foot { display: flex; gap: 6px; padding: 8px; border-top: 1px solid var(--line); flex-shrink: 0; }
+
+.filter-input, .mini-select {
+  background: var(--ink-800); border: 1px solid var(--line); color: var(--paper);
+  border-radius: 3px; padding: 6px 9px; font-size: 12px; font-family: var(--font-ui); width: 100%;
+}
+.mini-select { width: auto; flex-shrink: 0; }
+.ghost-btn {
+  flex: 1; background: transparent; border: 1px dashed var(--line); color: var(--paper-dim);
+  padding: 7px; border-radius: 3px; cursor: pointer; font-size: 11px;
+}
+.ghost-btn:hover { color: var(--shu); border-color: var(--shu); }
+
+/* ---------- side pane: board tree ---------- */
+.menu-category { padding: 8px 10px 2px; font-size: 10px; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; }
+.board-row, .fav-row, .hist-row {
+  display: flex; align-items: center; gap: 8px; padding: 7px 12px; cursor: pointer; font-size: 12.5px;
+  border-left: 2px solid transparent; color: var(--paper-dim);
+}
+.board-row:hover, .fav-row:hover, .hist-row:hover { background: var(--ink-800); color: var(--paper); }
+.board-row.active { border-left-color: var(--shu); color: var(--shu); background: var(--shu-soft); }
+.board-row .del, .fav-row .del { margin-left: auto; opacity: 0; font-size: 11px; color: var(--danger); }
+.board-row:hover .del, .fav-row:hover .del { opacity: 1; }
+.fav-row .sub, .hist-row .sub { font-size: 10px; color: var(--paper-faint); }
+.fav-row .main, .hist-row .main { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.fav-row .main span, .hist-row .main span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- thread list ---------- */
+.thread-row {
+  display: grid; grid-template-columns: 34px 1fr 46px; gap: 8px; align-items: center;
+  padding: 9px 12px; cursor: pointer; border-bottom: 1px solid var(--line); font-size: 12.5px;
+}
+.thread-row:hover { background: var(--ink-800); }
+.thread-row.active { background: var(--shu-soft); }
+.thread-row .idx { font-family: var(--font-mono); color: var(--paper-faint); font-size: 11px; }
+.thread-row .title { line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.thread-row .meta { display: flex; gap: 6px; font-size: 10px; color: var(--paper-faint); margin-top: 3px; font-family: var(--font-mono); }
+.momentum-bar { width: 44px; height: 6px; background: var(--ink-700); border-radius: 3px; overflow: hidden; justify-self: end; }
+.momentum-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--shu)); }
+
+/* ---------- posts ---------- */
+.post-list { padding: 6px 0; }
+.post {
+  padding: 10px 16px; border-bottom: 1px solid var(--line); scroll-margin-top: 8px;
+}
+.post.highlight { background: var(--shu-soft); }
+.post-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 11.5px; color: var(--paper-faint); font-family: var(--font-mono); }
+.post-num { color: var(--gold); font-weight: 700; cursor: pointer; }
+.post-name { color: var(--shu); font-weight: 700; }
+.post-body {
+  margin-top: 6px; white-space: pre-wrap; word-break: break-word; line-height: 1.65;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.post-body a.anchor-link { color: var(--gold); text-decoration: underline dotted; cursor: pointer; }
+.post-body a.ext-link { color: var(--shu); text-decoration: underline; }
+.post-img-preview { display: block; max-width: 320px; max-height: 320px; margin-top: 8px; border: 1px solid var(--line); border-radius: 3px; }
+.post-status { padding: 8px 16px; font-size: 11px; color: var(--paper-faint); border-top: 1px solid var(--line); font-family: var(--font-mono); flex-shrink: 0; }
+
+.anchor-preview-popup {
+  position: fixed; z-index: 50; max-width: 420px; background: var(--ink-800);
+  border: 1px solid var(--shu); border-radius: 4px; padding: 10px 12px; box-shadow: 0 8px 24px #0008;
+  font-family: var(--font-mono); font-size: 12.5px; white-space: pre-wrap;
+}
+
+/* ---------- empty states ---------- */
+.empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  height: 100%; color: var(--paper-faint); font-size: 12.5px; text-align: center; padding: 30px;
+}
+.empty .mark { font-size: 26px; color: var(--gold); }
+
+/* ---------- modal ---------- */
+.modal-root { position: fixed; inset: 0; background: #000a; display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal-root.hidden { display: none; }
+.modal {
+  width: min(460px, 92vw); background: var(--ink-800); border: 1px solid var(--line); border-radius: 6px; padding: 18px;
+}
+.modal h3 { margin: 0 0 12px; font-size: 14px; color: var(--gold); }
+.modal label { display: block; font-size: 11px; color: var(--paper-faint); margin: 10px 0 4px; }
+.modal input, .modal textarea {
+  width: 100%; background: var(--ink-900); border: 1px solid var(--line); color: var(--paper);
+  border-radius: 3px; padding: 8px 10px; font-size: 13px; font-family: var(--font-ui);
+}
+.modal textarea { min-height: 80px; font-family: var(--font-mono); resize: vertical; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.btn-primary, .btn-secondary {
+  padding: 8px 16px; border-radius: 3px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--line);
+}
+.btn-primary { background: var(--shu); border-color: var(--shu); color: #fff; }
+.btn-secondary { background: transparent; color: var(--paper-dim); }
+.modal-list { max-height: 240px; overflow-y: auto; margin-top: 8px; border-top: 1px solid var(--line); }
+.modal-list-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 2px; border-bottom: 1px solid var(--line); font-size: 12px; }
+
+/* ---------- responsive: 狭い画面(Discordモバイル等) ---------- */
+@media (max-width: 880px) {
+  .layout { grid-template-columns: 1fr; }
+  .pane { display: none; border-right: none; }
+  .pane.visible { display: flex; }
+  .only-narrow { display: flex; }
+  .tabs { display: none; }
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
